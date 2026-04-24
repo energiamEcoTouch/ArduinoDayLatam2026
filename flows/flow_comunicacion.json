@@ -1,0 +1,682 @@
+[
+    {
+        "id": "2d145ded28886045",
+        "type": "tab",
+        "label": "Comunication",
+        "disabled": false,
+        "info": "",
+        "env": []
+    },
+    {
+        "id": "4defd456b1c1ec28",
+        "type": "group",
+        "z": "2d145ded28886045",
+        "name": "Publicacion al broker MQTT",
+        "style": {
+            "stroke": "#0070c0",
+            "label": true,
+            "label-position": "ne",
+            "color": "#001f60",
+            "fill": "#bfdbef"
+        },
+        "nodes": [
+            "93dc19911508ac1f",
+            "ed0d52b1202450ad",
+            "31468269ad757de9",
+            "803db16f0c3b0afe",
+            "3491bf9f52de28cc",
+            "60237ea220f4246b"
+        ],
+        "x": 674,
+        "y": 19,
+        "w": 452,
+        "h": 442
+    },
+    {
+        "id": "4dbfee5c4d224e68",
+        "type": "group",
+        "z": "2d145ded28886045",
+        "name": "LOGO 8.4 siemens",
+        "style": {
+            "stroke": "#000000",
+            "fill": "#d1d1d1",
+            "label": true,
+            "color": "#6f2fa0"
+        },
+        "nodes": [
+            "e7acdc245523f760",
+            "0a45236f0e33058e",
+            "1aa390c85b89862a"
+        ],
+        "x": 414,
+        "y": 19,
+        "w": 232,
+        "h": 442
+    },
+    {
+        "id": "60ce2df0e44a2330",
+        "type": "group",
+        "z": "2d145ded28886045",
+        "name": "Suscripcion Topics",
+        "style": {
+            "stroke": "#ffC000",
+            "fill": "#ffffbf",
+            "label": true,
+            "color": "#0070c0"
+        },
+        "nodes": [
+            "bbabee98ba288b4b",
+            "b50360c2aa586adb",
+            "0711e84e94ba8fab",
+            "922a5d0c17676b4d",
+            "b4884666377578a7",
+            "ec1f37b7e03d8101"
+        ],
+        "x": 54,
+        "y": 479,
+        "w": 592,
+        "h": 322
+    },
+    {
+        "id": "55367c2de13b8454",
+        "type": "group",
+        "z": "2d145ded28886045",
+        "name": "Conexion con  la Logica",
+        "style": {
+            "stroke": "#6f2fa0",
+            "fill": "#dbcbe7",
+            "label": true,
+            "label-position": "ne",
+            "color": "#ff3f3f"
+        },
+        "nodes": [
+            "4737dfc6a11721b8",
+            "a2d9337a37e95143",
+            "d3002b7b9cf3596e",
+            "80a66b20e46ed2aa"
+        ],
+        "x": 674,
+        "y": 479,
+        "w": 452,
+        "h": 322
+    },
+    {
+        "id": "f15a9bd20cc83141",
+        "type": "group",
+        "z": "2d145ded28886045",
+        "name": "Manual",
+        "style": {
+            "stroke": "#92d04f",
+            "fill": "#e3f3d3",
+            "label": true,
+            "color": "#777777"
+        },
+        "nodes": [
+            "1dc52c344069381a",
+            "34911bbc14aad993",
+            "b76f0d7f85785906",
+            "af5c7d0170ef3598",
+            "038d8daef0694637",
+            "526fc60275efa090",
+            "1e3622cde987f140",
+            "a3be42fc61833235"
+        ],
+        "x": 54,
+        "y": 19,
+        "w": 332,
+        "h": 442
+    },
+    {
+        "id": "93dc19911508ac1f",
+        "type": "mqtt out",
+        "z": "2d145ded28886045",
+        "g": "4defd456b1c1ec28",
+        "name": "ArduinoDayLATAM2026",
+        "topic": "stop",
+        "qos": "0",
+        "retain": "false",
+        "respTopic": "",
+        "contentType": "",
+        "userProps": "",
+        "correl": "",
+        "expiry": "",
+        "broker": "788319c36b7cedd5",
+        "x": 810,
+        "y": 320,
+        "wires": []
+    },
+    {
+        "id": "bbabee98ba288b4b",
+        "type": "mqtt in",
+        "z": "2d145ded28886045",
+        "g": "60ce2df0e44a2330",
+        "name": "ArduinoDayLATAM2026",
+        "topic": "jog",
+        "qos": "2",
+        "datatype": "auto-detect",
+        "broker": "788319c36b7cedd5",
+        "nl": false,
+        "rap": true,
+        "rh": 0,
+        "inputs": 0,
+        "x": 520,
+        "y": 520,
+        "wires": [
+            [
+                "4737dfc6a11721b8"
+            ]
+        ]
+    },
+    {
+        "id": "1dc52c344069381a",
+        "type": "inject",
+        "z": "2d145ded28886045",
+        "g": "f15a9bd20cc83141",
+        "name": "jog_up",
+        "props": [
+            {
+                "p": "payload"
+            }
+        ],
+        "repeat": "",
+        "crontab": "",
+        "once": false,
+        "onceDelay": 0.1,
+        "topic": "",
+        "payload": "true",
+        "payloadType": "bool",
+        "x": 170,
+        "y": 160,
+        "wires": [
+            [
+                "31468269ad757de9"
+            ]
+        ]
+    },
+    {
+        "id": "4737dfc6a11721b8",
+        "type": "link out",
+        "z": "2d145ded28886045",
+        "g": "55367c2de13b8454",
+        "name": "link out 18",
+        "mode": "link",
+        "links": [
+            "514d5bdd88eebb3b",
+            "cf6202a66328901d"
+        ],
+        "x": 715,
+        "y": 520,
+        "wires": []
+    },
+    {
+        "id": "34911bbc14aad993",
+        "type": "inject",
+        "z": "2d145ded28886045",
+        "g": "f15a9bd20cc83141",
+        "name": "start",
+        "props": [
+            {
+                "p": "payload"
+            }
+        ],
+        "repeat": "",
+        "crontab": "",
+        "once": false,
+        "onceDelay": 0.1,
+        "topic": "",
+        "payload": "true",
+        "payloadType": "bool",
+        "x": 230,
+        "y": 260,
+        "wires": [
+            [
+                "ed0d52b1202450ad"
+            ]
+        ]
+    },
+    {
+        "id": "b76f0d7f85785906",
+        "type": "inject",
+        "z": "2d145ded28886045",
+        "g": "f15a9bd20cc83141",
+        "name": "stop",
+        "props": [
+            {
+                "p": "payload"
+            }
+        ],
+        "repeat": "",
+        "crontab": "",
+        "once": false,
+        "onceDelay": 0.1,
+        "topic": "",
+        "payload": "false",
+        "payloadType": "bool",
+        "x": 230,
+        "y": 320,
+        "wires": [
+            [
+                "93dc19911508ac1f"
+            ]
+        ]
+    },
+    {
+        "id": "af5c7d0170ef3598",
+        "type": "inject",
+        "z": "2d145ded28886045",
+        "g": "f15a9bd20cc83141",
+        "name": "jog_down",
+        "props": [
+            {
+                "p": "payload"
+            }
+        ],
+        "repeat": "",
+        "crontab": "",
+        "once": false,
+        "onceDelay": 0.1,
+        "topic": "",
+        "payload": "false",
+        "payloadType": "bool",
+        "x": 200,
+        "y": 200,
+        "wires": [
+            [
+                "31468269ad757de9"
+            ]
+        ]
+    },
+    {
+        "id": "ed0d52b1202450ad",
+        "type": "mqtt out",
+        "z": "2d145ded28886045",
+        "g": "4defd456b1c1ec28",
+        "name": "ArduinoDayLATAM2026",
+        "topic": "start",
+        "qos": "0",
+        "retain": "false",
+        "respTopic": "",
+        "contentType": "",
+        "userProps": "",
+        "correl": "",
+        "expiry": "",
+        "broker": "788319c36b7cedd5",
+        "x": 810,
+        "y": 260,
+        "wires": []
+    },
+    {
+        "id": "31468269ad757de9",
+        "type": "mqtt out",
+        "z": "2d145ded28886045",
+        "g": "4defd456b1c1ec28",
+        "name": "ArduinoDayLATAM2026",
+        "topic": "jog",
+        "qos": "0",
+        "retain": "false",
+        "respTopic": "",
+        "contentType": "",
+        "userProps": "",
+        "correl": "",
+        "expiry": "",
+        "broker": "788319c36b7cedd5",
+        "x": 810,
+        "y": 180,
+        "wires": []
+    },
+    {
+        "id": "b50360c2aa586adb",
+        "type": "mqtt in",
+        "z": "2d145ded28886045",
+        "g": "60ce2df0e44a2330",
+        "name": "ArduinoDayLATAM2026",
+        "topic": "start",
+        "qos": "2",
+        "datatype": "auto-detect",
+        "broker": "788319c36b7cedd5",
+        "nl": false,
+        "rap": true,
+        "rh": 0,
+        "inputs": 0,
+        "x": 460,
+        "y": 580,
+        "wires": [
+            [
+                "4737dfc6a11721b8"
+            ]
+        ]
+    },
+    {
+        "id": "0711e84e94ba8fab",
+        "type": "mqtt in",
+        "z": "2d145ded28886045",
+        "g": "60ce2df0e44a2330",
+        "name": "ArduinoDayLATAM2026",
+        "topic": "stop",
+        "qos": "2",
+        "datatype": "auto-detect",
+        "broker": "788319c36b7cedd5",
+        "nl": false,
+        "rap": true,
+        "rh": 0,
+        "inputs": 0,
+        "x": 420,
+        "y": 640,
+        "wires": [
+            [
+                "4737dfc6a11721b8"
+            ]
+        ]
+    },
+    {
+        "id": "e7acdc245523f760",
+        "type": "comment",
+        "z": "2d145ded28886045",
+        "g": "4dbfee5c4d224e68",
+        "name": "LOGO 8.4 Siemens",
+        "info": "",
+        "x": 530,
+        "y": 60,
+        "wires": []
+    },
+    {
+        "id": "922a5d0c17676b4d",
+        "type": "comment",
+        "z": "2d145ded28886045",
+        "g": "60ce2df0e44a2330",
+        "name": "Broker MQTT / subscribe",
+        "info": "",
+        "x": 190,
+        "y": 640,
+        "wires": []
+    },
+    {
+        "id": "a2d9337a37e95143",
+        "type": "comment",
+        "z": "2d145ded28886045",
+        "g": "55367c2de13b8454",
+        "name": "Logic",
+        "info": "",
+        "x": 1050,
+        "y": 620,
+        "wires": []
+    },
+    {
+        "id": "803db16f0c3b0afe",
+        "type": "mqtt out",
+        "z": "2d145ded28886045",
+        "g": "4defd456b1c1ec28",
+        "name": "ArduinoDayLATAM2026",
+        "topic": "stopE",
+        "qos": "0",
+        "retain": "false",
+        "respTopic": "",
+        "contentType": "",
+        "userProps": "",
+        "correl": "",
+        "expiry": "",
+        "broker": "788319c36b7cedd5",
+        "x": 810,
+        "y": 420,
+        "wires": []
+    },
+    {
+        "id": "038d8daef0694637",
+        "type": "inject",
+        "z": "2d145ded28886045",
+        "g": "f15a9bd20cc83141",
+        "name": "stopE_on",
+        "props": [
+            {
+                "p": "payload"
+            }
+        ],
+        "repeat": "",
+        "crontab": "",
+        "once": false,
+        "onceDelay": 0.1,
+        "topic": "",
+        "payload": "true",
+        "payloadType": "bool",
+        "x": 280,
+        "y": 380,
+        "wires": [
+            [
+                "803db16f0c3b0afe"
+            ]
+        ]
+    },
+    {
+        "id": "526fc60275efa090",
+        "type": "inject",
+        "z": "2d145ded28886045",
+        "g": "f15a9bd20cc83141",
+        "name": "stopE_off",
+        "props": [
+            {
+                "p": "payload"
+            }
+        ],
+        "repeat": "",
+        "crontab": "",
+        "once": false,
+        "onceDelay": 0.1,
+        "topic": "",
+        "payload": "false",
+        "payloadType": "bool",
+        "x": 300,
+        "y": 420,
+        "wires": [
+            [
+                "803db16f0c3b0afe"
+            ]
+        ]
+    },
+    {
+        "id": "b4884666377578a7",
+        "type": "mqtt in",
+        "z": "2d145ded28886045",
+        "g": "60ce2df0e44a2330",
+        "name": "ArduinoDayLATAM2026",
+        "topic": "stopE",
+        "qos": "2",
+        "datatype": "auto-detect",
+        "broker": "788319c36b7cedd5",
+        "nl": false,
+        "rap": true,
+        "rh": 0,
+        "inputs": 0,
+        "x": 460,
+        "y": 700,
+        "wires": [
+            [
+                "d3002b7b9cf3596e"
+            ]
+        ]
+    },
+    {
+        "id": "d3002b7b9cf3596e",
+        "type": "link out",
+        "z": "2d145ded28886045",
+        "g": "55367c2de13b8454",
+        "name": "link out 19",
+        "mode": "link",
+        "links": [
+            "70530f5334724271"
+        ],
+        "x": 715,
+        "y": 700,
+        "wires": []
+    },
+    {
+        "id": "3491bf9f52de28cc",
+        "type": "mqtt out",
+        "z": "2d145ded28886045",
+        "g": "4defd456b1c1ec28",
+        "name": "ArduinoDayLATAM2026",
+        "topic": "hab",
+        "qos": "0",
+        "retain": "false",
+        "respTopic": "",
+        "contentType": "",
+        "userProps": "",
+        "correl": "",
+        "expiry": "",
+        "broker": "788319c36b7cedd5",
+        "x": 810,
+        "y": 60,
+        "wires": []
+    },
+    {
+        "id": "1e3622cde987f140",
+        "type": "inject",
+        "z": "2d145ded28886045",
+        "g": "f15a9bd20cc83141",
+        "name": "Habilta_on",
+        "props": [
+            {
+                "p": "payload"
+            }
+        ],
+        "repeat": "",
+        "crontab": "",
+        "once": false,
+        "onceDelay": 0.1,
+        "topic": "",
+        "payload": "true",
+        "payloadType": "bool",
+        "x": 160,
+        "y": 60,
+        "wires": [
+            [
+                "3491bf9f52de28cc"
+            ]
+        ]
+    },
+    {
+        "id": "a3be42fc61833235",
+        "type": "inject",
+        "z": "2d145ded28886045",
+        "g": "f15a9bd20cc83141",
+        "name": "Habilita_off",
+        "props": [
+            {
+                "p": "payload"
+            }
+        ],
+        "repeat": "",
+        "crontab": "",
+        "once": false,
+        "onceDelay": 0.1,
+        "topic": "",
+        "payload": "false",
+        "payloadType": "bool",
+        "x": 160,
+        "y": 100,
+        "wires": [
+            [
+                "3491bf9f52de28cc"
+            ]
+        ]
+    },
+    {
+        "id": "ec1f37b7e03d8101",
+        "type": "mqtt in",
+        "z": "2d145ded28886045",
+        "g": "60ce2df0e44a2330",
+        "name": "ArduinoDayLATAM2026",
+        "topic": "hab",
+        "qos": "2",
+        "datatype": "auto-detect",
+        "broker": "788319c36b7cedd5",
+        "nl": false,
+        "rap": true,
+        "rh": 0,
+        "inputs": 0,
+        "x": 520,
+        "y": 760,
+        "wires": [
+            [
+                "80a66b20e46ed2aa"
+            ]
+        ]
+    },
+    {
+        "id": "80a66b20e46ed2aa",
+        "type": "link out",
+        "z": "2d145ded28886045",
+        "g": "55367c2de13b8454",
+        "name": "link out 20",
+        "mode": "link",
+        "links": [
+            "0f283278feb81aa7"
+        ],
+        "x": 715,
+        "y": 760,
+        "wires": []
+    },
+    {
+        "id": "60237ea220f4246b",
+        "type": "comment",
+        "z": "2d145ded28886045",
+        "g": "4defd456b1c1ec28",
+        "name": "Broker MQTT / publish",
+        "info": "",
+        "x": 1000,
+        "y": 360,
+        "wires": []
+    },
+    {
+        "id": "0a45236f0e33058e",
+        "type": "comment",
+        "z": "2d145ded28886045",
+        "g": "4dbfee5c4d224e68",
+        "name": "LOGO 8.4 / sub",
+        "info": "",
+        "x": 520,
+        "y": 420,
+        "wires": []
+    },
+    {
+        "id": "1aa390c85b89862a",
+        "type": "comment",
+        "z": "2d145ded28886045",
+        "g": "4dbfee5c4d224e68",
+        "name": "LOGO 8.4 / pub",
+        "info": "",
+        "x": 520,
+        "y": 220,
+        "wires": []
+    },
+    {
+        "id": "788319c36b7cedd5",
+        "type": "mqtt-broker",
+        "name": "",
+        "broker": "192.168.1.55",
+        "port": 1883,
+        "clientid": "",
+        "autoConnect": true,
+        "usetls": false,
+        "protocolVersion": 4,
+        "keepalive": 60,
+        "cleansession": true,
+        "autoUnsubscribe": true,
+        "birthTopic": "",
+        "birthQos": "0",
+        "birthRetain": "false",
+        "birthPayload": "",
+        "birthMsg": {},
+        "closeTopic": "",
+        "closeQos": "0",
+        "closeRetain": "false",
+        "closePayload": "",
+        "closeMsg": {},
+        "willTopic": "",
+        "willQos": "0",
+        "willRetain": "false",
+        "willPayload": "",
+        "willMsg": {},
+        "userProps": "",
+        "sessionExpiry": ""
+    }
+]

@@ -1,0 +1,346 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Velocidad de máquina — Simulación 3 días</title>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      background: #0d1117;
+      color: #e6edf3;
+      font-family: 'Segoe UI', system-ui, sans-serif;
+      padding: 1rem;
+    }
+
+    .header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 12px;
+    }
+
+    .title {
+      font-size: 14px;
+      font-weight: 600;
+      color: #e6edf3;
+      letter-spacing: .01em;
+    }
+
+    .badge {
+      font-size: 11px;
+      padding: 3px 10px;
+      border-radius: 3px;
+      font-weight: 600;
+      letter-spacing: .03em;
+    }
+    .badge-ok   { background: #1a4d1e; color: #3fb950; border: 1px solid #2ea04333; }
+    .badge-warn { background: #3a2a10; color: #ffa657; border: 1px solid #ffa65733; }
+    .badge-err  { background: #3a1010; color: #f85149; border: 1px solid #f8514933; }
+
+    .tabs {
+      display: flex;
+      gap: 6px;
+      margin-bottom: 10px;
+    }
+
+    .tab {
+      font-size: 12px;
+      padding: 5px 16px;
+      border-radius: 3px;
+      border: 1px solid #30363d;
+      cursor: pointer;
+      color: #8b949e;
+      background: #161b22;
+      transition: all .15s;
+      font-family: inherit;
+    }
+    .tab:hover  { color: #e6edf3; border-color: #58a6ff55; }
+    .tab.active { background: #0d2137; color: #58a6ff; border-color: #58a6ff; }
+
+    .legend {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 16px;
+      margin-bottom: 8px;
+      font-size: 11px;
+      color: #8b949e;
+    }
+    .legend-item { display: flex; align-items: center; gap: 5px; }
+    .legend-line { width: 20px; height: 2px; }
+    .legend-line.dashed {
+      background: repeating-linear-gradient(90deg, #ffd700 0, #ffd700 5px, transparent 5px, transparent 9px);
+    }
+
+    .chart-wrap {
+      position: relative;
+      width: 100%;
+      height: 320px;
+      background: #0d1117;
+    }
+
+    .info-strip {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      margin-top: 10px;
+      border-top: 1px solid #21262d;
+    }
+    .info-card {
+      background: #0d1117;
+      padding: 10px 14px;
+      border-right: 1px solid #21262d;
+    }
+    .info-card:last-child { border-right: none; }
+    .info-label { font-size: 11px; color: #8b949e; margin-bottom: 3px; }
+    .info-val   { font-size: 20px; font-weight: 600; color: #e6edf3; line-height: 1.1; }
+    .info-sub   { font-size: 11px; color: #8b949e; margin-top: 1px; }
+  </style>
+</head>
+<body>
+
+  <div class="header">
+    <div class="title">Velocidad de máquina — Simulación 3 días</div>
+    <span class="badge badge-ok" id="status-badge">Normal</span>
+  </div>
+
+  <div class="tabs">
+    <button class="tab active" onclick="switchDay(0)">Día 1 — Producción continua</button>
+    <button class="tab"        onclick="switchDay(1)">Día 2 — Intermitente</button>
+    <button class="tab"        onclick="switchDay(2)">Día 3 — Emergencia</button>
+  </div>
+
+  <div class="legend">
+    <div class="legend-item">
+      <div class="legend-line" style="background:#58a6ff"></div>
+      Velocidad real
+    </div>
+    <div class="legend-item">
+      <div class="legend-line dashed"></div>
+      Velocidad objetivo (1500 rpm)
+    </div>
+    <div class="legend-item">
+      <div class="legend-line" style="background:#f85149"></div>
+      Evento de emergencia
+    </div>
+  </div>
+
+  <div class="chart-wrap">
+    <canvas id="speedChart"
+            role="img"
+            aria-label="Gráfico de velocidad de máquina con rampas de arranque, paradas normales y parada de emergencia">
+    </canvas>
+  </div>
+
+  <div class="info-strip">
+    <div class="info-card">
+      <div class="info-label">Disponibilidad</div>
+      <div class="info-val" id="info-avail">94%</div>
+      <div class="info-sub" id="info-avail-sub">del turno</div>
+    </div>
+    <div class="info-card">
+      <div class="info-label">Paradas</div>
+      <div class="info-val" id="info-stops">2</div>
+      <div class="info-sub" id="info-stops-sub">paradas programadas</div>
+    </div>
+    <div class="info-card">
+      <div class="info-label">Vel. media en marcha</div>
+      <div class="info-val" id="info-avg">1487</div>
+      <div class="info-sub">rpm promedio</div>
+    </div>
+  </div>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.js"></script>
+  <script>
+    const TARGET = 1500;
+    const STEPS  = 480;
+    const T0     = new Date('2026-04-19T06:00:00').getTime();
+
+    function ramp(from, to, n) {
+      return Array.from({ length: n }, (_, i) => {
+        const f = i / Math.max(n - 1, 1);
+        const s = f < 0.5 ? 2 * f * f : 1 - Math.pow(-2 * f + 2, 2) / 2;
+        return from + (to - from) * s;
+      });
+    }
+
+    function plateau(val, n) {
+      return Array.from({ length: n }, (_, i) =>
+        val === 0 ? 0 : Math.max(0,
+          val + Math.sin(i * 0.7) * 25 + Math.sin(i * 0.13) * 18 + (Math.random() - .5) * 24
+        )
+      );
+    }
+
+    function zeros(n) { return Array.from({ length: n }, () => 0); }
+    function cat()    { return [].concat(...Array.from(arguments)); }
+
+    function pad(arr) {
+      while (arr.length < STEPS) arr.push(0);
+      return arr.slice(0, STEPS);
+    }
+
+    function buildDay1() {
+      return pad(cat(
+        ramp(0, TARGET, 30), plateau(TARGET, 160),
+        ramp(TARGET, 0, 20), zeros(15),
+        ramp(0, TARGET, 25), plateau(TARGET, 200),
+        ramp(TARGET, 0, 30)
+      ));
+    }
+
+    function buildDay2() {
+      const blocks = [
+        {u:20,r:60,d:15,s:20}, {u:18,r:45,d:15,s:30},
+        {u:22,r:55,d:18,s:25}, {u:20,r:70,d:20,s:20},
+        {u:15,r:40,d:15,s:18}, {u:20,r:50,d:15,s:10}
+      ];
+      let arr = [];
+      for (const b of blocks)
+        arr = cat(arr, ramp(0,TARGET,b.u), plateau(TARGET,b.r), ramp(TARGET,0,b.d), zeros(b.s));
+      return pad(arr);
+    }
+
+    function buildDay3() {
+      const emg = [1500, 1420, 1180, 780, 380, 90, 20, 0];
+      return pad(cat(
+        ramp(0, TARGET, 30), plateau(TARGET, 180),
+        ramp(TARGET, 0, 25), zeros(20),
+        ramp(0, TARGET, 28), plateau(TARGET, 130),
+        emg
+      ));
+    }
+
+    const day1  = buildDay1();
+    const day2  = buildDay2();
+    const day3  = buildDay3();
+    const emgAt = 30 + 180 + 25 + 20 + 28 + 130;
+
+    const labels = Array.from({ length: STEPS }, (_, i) => {
+      const d = new Date(T0 + i * 3 * 60 * 1000);
+      return d.getHours().toString().padStart(2,'0') + ':' + d.getMinutes().toString().padStart(2,'0');
+    });
+
+    const dayConfigs = [
+      { data: day1, avail:'94%', stops:'2', avg:'1487', badgeClass:'badge-ok',   badgeTxt:'Normal',       stopSub:'paradas programadas', color:'#58a6ff' },
+      { data: day2, avail:'72%', stops:'6', avg:'1468', badgeClass:'badge-warn',  badgeTxt:'Intermitente', stopSub:'micro-paradas',       color:'#ffa657' },
+      { data: day3, avail:'69%', stops:'3', avg:'1452', badgeClass:'badge-err',   badgeTxt:'EMERGENCIA',   stopSub:'incl. 1 emergencia',  color:'#f78166' }
+    ];
+
+    const emergencyPlugin = {
+      id: 'emergencyZone',
+      afterDraw(chart) {
+        if (currentDay !== 2) return;
+        const { ctx, scales } = chart;
+        const x   = scales.x.getPixelForValue(emgAt);
+        const top = scales.y.getPixelForValue(1700);
+        const bot = scales.y.getPixelForValue(0);
+        ctx.save();
+        ctx.fillStyle = 'rgba(248,81,73,0.07)';
+        ctx.fillRect(x, top, chart.width - x, bot - top);
+        ctx.strokeStyle = '#f8514977';
+        ctx.lineWidth = 1.5;
+        ctx.setLineDash([4, 3]);
+        ctx.beginPath(); ctx.moveTo(x, top); ctx.lineTo(x, bot); ctx.stroke();
+        ctx.setLineDash([]);
+        ctx.fillStyle = '#f85149';
+        ctx.font = '10px system-ui';
+        ctx.fillText('⚡ Parada emergencia', x + 4, top + 14);
+        ctx.restore();
+      }
+    };
+
+    let currentDay = 0;
+    let chart;
+    const ctx = document.getElementById('speedChart').getContext('2d');
+
+    function buildChart(dayIdx) {
+      const cfg = dayConfigs[dayIdx];
+      if (chart) chart.destroy();
+      chart = new Chart(ctx, {
+        type: 'line',
+        data: {
+          labels,
+          datasets: [
+            {
+              label: 'Velocidad real',
+              data: cfg.data,
+              borderColor: cfg.color,
+              borderWidth: 1.5,
+              pointRadius: 0,
+              tension: 0.3,
+              fill: { target: 'origin', above: cfg.color + '18' }
+            },
+            {
+              label: 'Velocidad objetivo',
+              data: Array(STEPS).fill(TARGET),
+              borderColor: '#ffd700',
+              borderWidth: 1,
+              pointRadius: 0,
+              tension: 0,
+              fill: false,
+              borderDash: [6, 4]
+            }
+          ]
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          animation: { duration: 400 },
+          plugins: {
+            legend: { display: false },
+            tooltip: {
+              mode: 'index',
+              intersect: false,
+              backgroundColor: '#161b22',
+              borderColor: '#30363d',
+              borderWidth: 1,
+              titleColor: '#8b949e',
+              bodyColor: '#e6edf3',
+              callbacks: {
+                label(c) { return ` ${c.dataset.label}: ${Math.round(c.parsed.y)} rpm`; }
+              }
+            }
+          },
+          scales: {
+            x: {
+              ticks: { color: '#8b949e', font: { size: 10 }, maxRotation: 0, autoSkip: true, maxTicksLimit: 12 },
+              grid:   { color: '#21262d' },
+              border: { color: '#30363d' }
+            },
+            y: {
+              min: 0,
+              max: 1700,
+              ticks: { color: '#8b949e', font: { size: 10 }, callback: v => v + ' rpm' },
+              grid:   { color: '#21262d' },
+              border: { color: '#30363d' }
+            }
+          }
+        },
+        plugins: [emergencyPlugin]
+      });
+    }
+
+    function updateInfo(dayIdx) {
+      const c = dayConfigs[dayIdx];
+      document.getElementById('info-avail').textContent    = c.avail;
+      document.getElementById('info-stops').textContent    = c.stops;
+      document.getElementById('info-stops-sub').textContent = c.stopSub;
+      document.getElementById('info-avg').textContent      = c.avg;
+      const badge = document.getElementById('status-badge');
+      badge.textContent = c.badgeTxt;
+      badge.className   = 'badge ' + c.badgeClass;
+      document.querySelectorAll('.tab').forEach((t, i) => t.classList.toggle('active', i === dayIdx));
+    }
+
+    function switchDay(dayIdx) {
+      currentDay = dayIdx;
+      buildChart(dayIdx);
+      updateInfo(dayIdx);
+    }
+
+    switchDay(0);
+  </script>
+</body>
+</html>
+```
